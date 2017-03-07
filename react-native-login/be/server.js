@@ -164,7 +164,6 @@ apiRoutes.get('/', function (req, res) {
 app.use('/api', apiRoutes);
 
  
-
 // Start the server
 app.listen(port);
 console.log('Magic happens at http://localhost:' + port);
