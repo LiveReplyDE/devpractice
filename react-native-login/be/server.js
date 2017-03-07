@@ -63,6 +63,69 @@ apiRoutes.post('/authenticate', function (req, res) {
 		console.log("Response body: " + JSON.stringify(res.body));
 });
 
+// users endpoint - get / create
+apiRoutes.route('/users')
+	.get(function(req, res) {
+		User.find({}, function (err, users) {
+				res.json(users);
+		});
+	})
+	.post(function(req, res) {
+		var user = new User({
+			name: req.body.name,
+			password: req.body.password,
+			admin: true
+		});
+
+		user.save(function(err) {
+			if (err) throw err;
+
+			console.log('User saved successfully');
+			res.json({ success: true });
+		 });
+	});
+
+// user endpoint - get / update / delete
+apiRoutes.route('/users/:id')
+	.get(function(req, res){
+		User.findById(req.params.id, function(err, user){
+			if (!user){
+				res.status('404').send();
+			}else{
+				res.json(user);
+			}
+		});
+	})
+	.put(function(req, res){
+        User.findById(req.params.id, function(err, user) {
+            if (err){
+                res.send(err);
+			}
+
+			// update name/password of the user
+            user.name = req.body.name;
+			user.password = req.body.password;
+
+            // save the user
+            user.save(function(err) {
+                if (err)
+                    res.send(err);
+
+                res.json({ message: 'User updated!' });
+            });
+		})
+	})
+	.delete(function(req, res){
+		User.remove({
+			_id: req.params.id
+		}, function(err, bear) {
+				if (err)
+					res.send(err);
+
+				res.json({ message: 'Successfully deleted' });
+		});
+	});
+
 // route middleware to verify a token
 apiRoutes.use(function (req, res, next) {
 
@@ -97,32 +160,10 @@ apiRoutes.get('/', function (req, res) {
 		res.json({message: 'Welcome to the coolest API on earth!'});
 });
 
-// return all users (GET http://localhost:8080/api/users)
-apiRoutes.get('/users', function (req, res) {
-		User.find({}, function (err, users) {
-				res.json(users);
-		});
-});
-
 // apply the routes to our application wit hthe prefix /api
 app.use('/api', apiRoutes);
 
-/*
- app.get('/setup', function(req, res) {
- var user1 = new User({
- name: 'Andreas Steingaß',
- password: 'password',
- admin: true
- });
-
- user1.save(function(err) {
- if (err) throw err;
-
- console.log('User saved successfully');
- res.json({ success: true });
- });
- });
- */
+ 
 
 // Start the server
 app.listen(port);
