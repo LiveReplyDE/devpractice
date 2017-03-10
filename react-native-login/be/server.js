@@ -9,6 +9,8 @@ var jwt = require('jsonwebtoken');
 var config = require('./config');
 var User = require('./app/models/user');
 
+var util = require('util');
+
 // Configuration
 var port = process.env.PORT || config.port;
 mongoose.connect(config.database);
@@ -32,9 +34,10 @@ apiRoutes.post('/authenticate', function (req, res) {
 
 				// if user is not matching in db
 				if (!user) {
+					//res.status('401').send('Authentication failed. User not found!');
 						res.json({
 								success: false,
-								message: 'Authentication failed. User not found'
+								message: 'Authentication failed. User not found!'
 						});
 				} else if (user) { // if user name is matching in db
 
@@ -56,11 +59,11 @@ apiRoutes.post('/authenticate', function (req, res) {
 										message: 'Login successful!',
 										token: token
 								});
+							
 						}
 				}
 		});
 		console.log("Request body: " + JSON.stringify(req.body));
-		console.log("Response body: " + JSON.stringify(res.body));
 });
 
 // users endpoint - get / create

@@ -1,12 +1,15 @@
 import React, {Component} from 'react';
 import {AppRegistry, Text, View, TextInput, Button, StyleSheet} from 'react-native';
 
+import auth from '../../utils/auth';
+
 export default class Login extends Component{
   constructor(props){
     super(props);
     this.state = {
       username: '',
-      password: ''
+      password: '',
+      token: ''
     }
   }
 
@@ -29,17 +32,35 @@ export default class Login extends Component{
         <View style={styles.buttons}>
           <Button
             title="Login"
-            onPress={handleLogin}
+            onPress={this._onPressLogin}
           />
           <Button
-            title="Submit"
-            color="grey"
-            onPress={handleSubmit}
+              title="Submit"
+              color="grey"
+              onPress={this._onPressSubmit}
           />
         </View>
       </View>
     );
   }
+
+  _onPressLogin = () => {
+      if (this.state.username === '' || this.state.password === '') {
+          alert("Username or password is empty!")
+      } else {
+          auth.getToken(this.state.username, this.state.password).then((res) => {
+              if (res.success === false) {
+                  alert(res.message);
+              } else {
+                  alert(res.message);
+              }
+          });
+      }
+  };
+
+  _onPressSubmit = () => {
+    alert("Submit");
+  };
 }
 
 const styles = StyleSheet.create({
@@ -59,13 +80,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   }
 });
-
-const handleLogin = () => {
-  alert("Login");
-};
-
-const handleSubmit = () => {
-  alert("Submit");
-};
 
 AppRegistry.registerComponent('Login', () => Login);
