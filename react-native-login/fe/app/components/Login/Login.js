@@ -72,7 +72,9 @@ const styles = StyleSheet.create({
     fontSize: 25
   },
   inputs: {
-    borderColor: 'yellow'
+    borderColor: 'yellow',
+    borderWidth: 1,
+    height: 40
   },
   buttons: {
     marginTop: 10,
