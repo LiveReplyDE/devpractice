@@ -9,6 +9,8 @@ var jwt = require('jsonwebtoken');
 var config = require('./config');
 var User = require('./app/models/user');
 
+var util = require('util');
+
 // Configuration
 var port = process.env.PORT || config.port;
 mongoose.connect(config.database);
@@ -32,9 +34,11 @@ apiRoutes.post('/authenticate', function (req, res) {
 
 				// if user is not matching in db
 				if (!user) {
+					//res.status('401').send('Authentication failed. User not found!');
 						res.json({
 								success: false,
 								message: 'Authentication failed. User not found'
+								message: 'Authentication failed. User not found!'
 						});
 				} else if (user) { // if user name is matching in db
 
@@ -56,6 +60,7 @@ apiRoutes.post('/authenticate', function (req, res) {
 										message: 'Login successful!',
 										token: token
 								});
+							
 						}
 				}
 		});
@@ -160,8 +165,32 @@ apiRoutes.get('/', function (req, res) {
 		res.json({message: 'Welcome to the coolest API on earth!'});
 });
 
+// return all users (GET http://localhost:8080/api/users)
+apiRoutes.get('/users', function (req, res) {
+		User.find({}, function (err, users) {
+				res.json(users);
+		});
+});
+
 // apply the routes to our application wit hthe prefix /api
 app.use('/api', apiRoutes);
+
+/*
+ app.get('/setup', function(req, res) {
+ var user1 = new User({
+ name: 'Andreas Steingaﬂ',
+ password: 'password',
+ admin: true
+ });
+
+ user1.save(function(err) {
+ if (err) throw err;
+
+ console.log('User saved successfully');
+ res.json({ success: true });
+ });
+ });
+ */
 
  
 
